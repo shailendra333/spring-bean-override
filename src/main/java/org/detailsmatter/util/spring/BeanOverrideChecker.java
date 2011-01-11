@@ -262,11 +262,23 @@ public class BeanOverrideChecker {
 	}
 
 	private void registerOverridesFromContextOverridesAnnotation(Class<?> context, BeanOverridesContext beanOverridesContext) {
-		ContextOverride contextOverrides = context.getAnnotation(ContextOverride.class);
-		if (contextOverrides != null) {
-			for (String bean : contextOverrides.beans()) {
-				beanOverridesContext.registerOverride(bean, contextOverrides.of(), contextOverrides.with(), OverridePriority.CLASS);
+		ContextOverrides contextOverrides = context.getAnnotation(ContextOverrides.class);
+		if( contextOverrides != null ) {
+			for( ContextOverride contextOverride : contextOverrides.value() ) {
+				registerOverridesFromContextOverrideAnnotation( beanOverridesContext, contextOverride );
 			}
+		}
+
+		ContextOverride contextOverride = context.getAnnotation(ContextOverride.class);
+		if (contextOverride != null) {
+			registerOverridesFromContextOverrideAnnotation( beanOverridesContext, contextOverride );
+		}
+	}
+
+	private void registerOverridesFromContextOverrideAnnotation( BeanOverridesContext beanOverridesContext,
+			ContextOverride contextOverrides ) {
+		for (String bean : contextOverrides.beans()) {
+			beanOverridesContext.registerOverride(bean, contextOverrides.of(), contextOverrides.with(), OverridePriority.CLASS);
 		}
 	}
 
