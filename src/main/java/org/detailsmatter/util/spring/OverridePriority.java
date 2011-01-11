@@ -1,7 +1,16 @@
 package org.detailsmatter.util.spring;
 
 public enum OverridePriority {
-	METHOD(0), CLASS(1);
+	/**
+	 * @see BeanOverride
+	 */
+	METHOD(0), 
+	
+	/**
+	 * @see ContextOverride
+	 * @see ContextOverrides
+	 */
+	CLASS(1);
 
 	private int priority;
 
