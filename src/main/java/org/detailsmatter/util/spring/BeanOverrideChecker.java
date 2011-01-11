@@ -22,6 +22,7 @@ public class BeanOverrideChecker {
 	static class BeanDefinition {
 		public final String beanName;
 		public final Class<?> context;
+		private final String toString;
 
 		public BeanDefinition(String beanName, Class<?> context) {
 			Assert.notNull(beanName);
@@ -29,11 +30,17 @@ public class BeanOverrideChecker {
 
 			this.beanName = beanName;
 			this.context = context;
+
+			if (context != Void.class) {
+				toString = context.getSimpleName() + "." + beanName;
+			} else {
+				toString = beanName;
+			}
 		}
 
 		@Override
 		public String toString() {
-			return context.getSimpleName() + "." + beanName;
+			return toString;
 		}
 	}
 
@@ -255,7 +262,7 @@ public class BeanOverrideChecker {
 	}
 
 	private void registerOverridesFromContextOverridesAnnotation(Class<?> context, BeanOverridesContext beanOverridesContext) {
-		ContextOverrides contextOverrides = context.getAnnotation(ContextOverrides.class);
+		ContextOverride contextOverrides = context.getAnnotation(ContextOverride.class);
 		if (contextOverrides != null) {
 			for (String bean : contextOverrides.beans()) {
 				beanOverridesContext.registerOverride(bean, contextOverrides.of(), contextOverrides.with(), OverridePriority.CLASS);

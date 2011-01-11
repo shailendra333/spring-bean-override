@@ -8,18 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface ContextOverrides {
-	/**
-	 * The overridden beans
-	 */
-	String[] beans();
-
-	/**
-	 * @Configuration class which gets overridden by {@link #with()}
-	 */
-	Class<?> of();
-
-	/**
-	 * @Configuration class which overrides {@link #of()}
-	 */
-	Class<?> with();
+	ContextOverride[] values();
 }

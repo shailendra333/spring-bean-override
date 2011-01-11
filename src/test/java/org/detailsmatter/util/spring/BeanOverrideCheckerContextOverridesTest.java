@@ -44,7 +44,7 @@ public class BeanOverrideCheckerContextOverridesTest {
 
 	@Configuration
 	@Import({AppContext.class, TestContext.class})
-	@ContextOverrides(beans = {"aBean", "bBean"}, of = AppContext.class, with = TestContext.class)
+	@ContextOverride(beans = {"aBean", "bBean"}, of = AppContext.class, with = TestContext.class)
 	public static class AppTestContext {
 	}
 
@@ -55,7 +55,7 @@ public class BeanOverrideCheckerContextOverridesTest {
 
 	@Configuration
 	@Import({AppContext.class, TestContext.class})
-	@ContextOverrides(beans = {"aBean", "bBean", "cBean"}, of = AppContext.class, with = TestContext.class)
+	@ContextOverride(beans = {"aBean", "bBean", "cBean"}, of = AppContext.class, with = TestContext.class)
 	public static class TooManyOverrideAppTestContext {
 	}
 
@@ -66,7 +66,7 @@ public class BeanOverrideCheckerContextOverridesTest {
 
 	@Configuration
 	@Import({AppContext.class, TestContext.class})
-	@ContextOverrides(beans = "aBean", of = AppContext.class, with = TestContext.class)
+	@ContextOverride(beans = "aBean", of = AppContext.class, with = TestContext.class)
 	public static class MissingOverrideAppTestContext {
 	}
 
