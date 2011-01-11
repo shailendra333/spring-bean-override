@@ -89,17 +89,23 @@ public class BeanOverrideChecker {
 	 */
 	public void checkBeanOverride(Class<?> context) {
 		Set<BeanOverrideViolation> violations = new HashSet<BeanOverrideViolation>();
-		checkBeanOverride(context, new BeanDefinitions(), violations);
+		checkBeanOverride(context, new BeanDefinitions(), violations, new HashSet<Class<?>>());
 		if (!violations.isEmpty()) {
 			throw new IllegalBeanOverrideException(violations);
 		}
 	}
 
-	private void checkBeanOverride(Class<?> context, BeanDefinitions beanDefinitions, Set<BeanOverrideViolation> violations) {
+	private void checkBeanOverride(Class<?> context, BeanDefinitions beanDefinitions, Set<BeanOverrideViolation> violations,
+			Set<Class<?>> processedClasses) {
+		if (processedClasses.contains(context)) {
+			return;
+		}
+
 		Assert.hasAnnotation(context, Configuration.class);
+		processedClasses.add(context);
 
 		// Important : depth first traversal
-		checkBeanOverrideFromImport(context.getAnnotation(Import.class), beanDefinitions, violations);
+		checkBeanOverrideFromImport(context.getAnnotation(Import.class), beanDefinitions, violations, processedClasses);
 
 		for (Method method : context.getDeclaredMethods()) {
 			Bean beanAnnotation = method.getAnnotation(Bean.class);
@@ -141,10 +147,11 @@ public class BeanOverrideChecker {
 		beanDefinitions.add(newBean);
 	}
 
-	private void checkBeanOverrideFromImport(Import importAnnotation, BeanDefinitions beanDefinitions, Set<BeanOverrideViolation> violations) {
+	private void checkBeanOverrideFromImport(Import importAnnotation, BeanDefinitions beanDefinitions, Set<BeanOverrideViolation> violations,
+			Set<Class<?>> processedClasses) {
 		if (importAnnotation != null) {
 			for (Class<?> context : importAnnotation.value()) {
-				checkBeanOverride(context, beanDefinitions, violations);
+				checkBeanOverride(context, beanDefinitions, violations, processedClasses);
 			}
 		}
 	}
