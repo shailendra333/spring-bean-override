@@ -84,6 +84,9 @@ public class BeanOverrideChecker {
 	}
 
 	private void registerOverridesFromContextOverridesAnnotation(Class<?> context, BeanOverridesContext beanOverridesContext) {
+		// register imports first to allow override in the top level class
+		registerOverridesFromImportedContextOverridesAnnotation(context.getAnnotation(Import.class), beanOverridesContext);
+
 		ContextOverrides contextOverrides = context.getAnnotation(ContextOverrides.class);
 		if (contextOverrides != null) {
 			for (ContextOverride contextOverride : contextOverrides.value()) {
@@ -95,8 +98,6 @@ public class BeanOverrideChecker {
 		if (contextOverride != null) {
 			registerOverridesFromContextOverrideAnnotation(beanOverridesContext, contextOverride);
 		}
-
-		registerOverridesFromImportedContextOverridesAnnotation(context.getAnnotation(Import.class), beanOverridesContext);
 	}
 
 	private void registerOverridesFromImportedContextOverridesAnnotation(Import importAnnotation, BeanOverridesContext beanOverridesContext) {

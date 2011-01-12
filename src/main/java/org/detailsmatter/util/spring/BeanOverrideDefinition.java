@@ -6,10 +6,9 @@ package org.detailsmatter.util.spring;
 import static org.hamcrest.Matchers.not;
 
 import org.detailsmatter.util.assertion.Assert;
-import org.hamcrest.Matchers;
 
 class BeanOverrideDefinition {
-	
+
 	public final String beanId;
 	public final Class<?> overriddenContext;
 	public final Class<?> overridingContext;
@@ -17,14 +16,14 @@ class BeanOverrideDefinition {
 	public final boolean overridesSpecificContext;
 	public final BeanDefinition overriddenBean;
 	public final BeanDefinition overridingBean;
-	
+
 	private BeanOverrideDefinition(String beanId, Class<?> overriddenContext, Class<?> overridingContext, OverridePriority priority) {
-		Assert.notNull( beanId );
-		Assert.notNull( overriddenContext );
-		Assert.notNull( overridingContext );
-		Assert.notNull(  priority );
-		Assert.that(overridingContext, not( (Class) Void.class ));
-		
+		Assert.notNull(beanId);
+		Assert.notNull(overriddenContext);
+		Assert.notNull(overridingContext);
+		Assert.notNull(priority);
+		Assert.that(overridingContext, not((Class) Void.class));
+
 		this.beanId = beanId;
 		this.overriddenContext = overriddenContext;
 		this.overridingContext = overridingContext;
@@ -37,20 +36,27 @@ class BeanOverrideDefinition {
 	public boolean hasPriorityOver(BeanOverrideDefinition other) {
 		return this.priority.isHigherThan(other.priority);
 	}
-	
-	public static BeanOverrideDefinition forMethod( String beanId, Class<?> overriddenContext, Class<?> overridingContext) {
+
+	public static BeanOverrideDefinition forMethod(String beanId, Class<?> overriddenContext, Class<?> overridingContext) {
 		return new BeanOverrideDefinition(beanId, overriddenContext, overridingContext, OverridePriority.METHOD);
 	}
-	
+
 	public static BeanOverrideDefinition forMethod(BeanDefinition overridingBeanDefinition) {
-		return new BeanOverrideDefinition(overridingBeanDefinition.beanName, Void.class, overridingBeanDefinition.context, OverridePriority.METHOD);
+		return new BeanOverrideDefinition(overridingBeanDefinition.beanName, Void.class, overridingBeanDefinition.context,
+				OverridePriority.METHOD);
 	}
-	
-	public static BeanOverrideDefinition forMethod( BeanDefinition overriddenBeanDefinition, Class<?> overridingContext) {
-		return new BeanOverrideDefinition(overriddenBeanDefinition.beanName, overriddenBeanDefinition.context, overridingContext, OverridePriority.METHOD);
+
+	public static BeanOverrideDefinition forMethod(BeanDefinition overriddenBeanDefinition, Class<?> overridingContext) {
+		return new BeanOverrideDefinition(overriddenBeanDefinition.beanName, overriddenBeanDefinition.context, overridingContext,
+				OverridePriority.METHOD);
 	}
-	
-	public static BeanOverrideDefinition forClass( String beanId, Class<?> overriddenContext, Class<?> overridingContext) {
+
+	public static BeanOverrideDefinition forClass(String beanId, Class<?> overriddenContext, Class<?> overridingContext) {
 		return new BeanOverrideDefinition(beanId, overriddenContext, overridingContext, OverridePriority.CLASS);
+	}
+
+	@Override
+	public String toString() {
+		return "BeanOverride[" + overriddenBean + " <-- " + overridingBean + "]";
 	}
 }
