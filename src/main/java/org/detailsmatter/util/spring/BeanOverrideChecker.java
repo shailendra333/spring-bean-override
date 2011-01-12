@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-
 /**
  * Performs bean override checks
  * @author <a href="mailto:biethb@gmail.com">Bruno Bieth</a>
@@ -24,10 +23,14 @@ public class BeanOverrideChecker {
 			throw new IllegalBeanOverrideException(violations);
 		}
 	}
-	
+
 	public Set<BeanOverrideViolation> getBeanOverrideViolations(Class<?> context) {
 		Set<BeanOverrideViolation> violations = new HashSet<BeanOverrideViolation>();
+
 		BeanOverridesContext beanOverridesContext = new BeanOverridesContext();
+
+		registerOverridesFromContextOverridesAnnotation(context, beanOverridesContext);
+
 		checkBeanOverride(context, beanOverridesContext, violations, new HashSet<Class<?>>());
 		violations.addAll(beanOverridesContext.getUnfulfilledOverrides());
 		return violations;
@@ -41,8 +44,6 @@ public class BeanOverrideChecker {
 
 		Assert.hasAnnotation(context, Configuration.class);
 		processedClasses.add(context);
-
-		registerOverridesFromContextOverridesAnnotation(context, beanOverridesContext);
 
 		// Important : depth first traversal
 		checkBeanOverrideFromImport(context.getAnnotation(Import.class), beanOverridesContext, violations, processedClasses);
@@ -78,29 +79,37 @@ public class BeanOverrideChecker {
 	private void registerOverrideFromBeanOverrideAnnotation(BeanOverride beanOverride, String name, Class<?> overridingContext,
 			BeanOverridesContext beanOverridesContext) {
 		if (beanOverride != null) {
-			beanOverridesContext.registerOverride(BeanOverrideDefinition.forMethod( name, beanOverride.context(), overridingContext));
+			beanOverridesContext.registerOverride(BeanOverrideDefinition.forMethod(name, beanOverride.context(), overridingContext));
 		}
 	}
 
 	private void registerOverridesFromContextOverridesAnnotation(Class<?> context, BeanOverridesContext beanOverridesContext) {
 		ContextOverrides contextOverrides = context.getAnnotation(ContextOverrides.class);
-		if( contextOverrides != null ) {
-			for( ContextOverride contextOverride : contextOverrides.value() ) {
-				registerOverridesFromContextOverrideAnnotation( beanOverridesContext, contextOverride );
+		if (contextOverrides != null) {
+			for (ContextOverride contextOverride : contextOverrides.value()) {
+				registerOverridesFromContextOverrideAnnotation(beanOverridesContext, contextOverride);
 			}
 		}
 
 		ContextOverride contextOverride = context.getAnnotation(ContextOverride.class);
 		if (contextOverride != null) {
-			registerOverridesFromContextOverrideAnnotation( beanOverridesContext, contextOverride );
+			registerOverridesFromContextOverrideAnnotation(beanOverridesContext, contextOverride);
+		}
+
+		registerOverridesFromImportedContextOverridesAnnotation(context.getAnnotation(Import.class), beanOverridesContext);
+	}
+
+	private void registerOverridesFromImportedContextOverridesAnnotation(Import importAnnotation, BeanOverridesContext beanOverridesContext) {
+		if (importAnnotation != null) {
+			for (Class<?> context : importAnnotation.value()) {
+				registerOverridesFromContextOverridesAnnotation(context, beanOverridesContext);
+			}
 		}
 	}
 
-	private void registerOverridesFromContextOverrideAnnotation( BeanOverridesContext beanOverridesContext,
-			ContextOverride contextOverrides ) {
+	private void registerOverridesFromContextOverrideAnnotation(BeanOverridesContext beanOverridesContext, ContextOverride contextOverrides) {
 		for (String bean : contextOverrides.beans()) {
-			beanOverridesContext.registerOverride(
-					BeanOverrideDefinition.forClass( bean, contextOverrides.of(), contextOverrides.with()));
+			beanOverridesContext.registerOverride(BeanOverrideDefinition.forClass(bean, contextOverrides.of(), contextOverrides.with()));
 		}
 	}
 
