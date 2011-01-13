@@ -3,8 +3,6 @@
  */
 package org.detailsmatter.util.spring;
 
-import static org.hamcrest.Matchers.not;
-
 import org.detailsmatter.util.assertion.Assert;
 
 class BeanOverrideDefinition {
@@ -22,7 +20,7 @@ class BeanOverrideDefinition {
 		Assert.notNull(overriddenContext);
 		Assert.notNull(overridingContext);
 		Assert.notNull(priority);
-		Assert.that(overridingContext, not((Class) Void.class));
+		Assert.that(overridingContext != Void.class, "Overriding context should not be Void.class");
 
 		this.beanId = beanId;
 		this.overriddenContext = overriddenContext;

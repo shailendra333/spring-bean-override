@@ -19,16 +19,22 @@
 
 		<dependency>
 			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest-library</artifactId>
 			<version>1.2</version>
+			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.detailsmatter.util</groupId>
-			<artifactId>hamcrest-live-assert</artifactId>
-			<version>1.2</version>
+			<artifactId>assert-utils</artifactId>
+			<version>1.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
@@ -37,14 +43,14 @@
 
 		<dependency>
 			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
+			<artifactId>junit-dep</artifactId>
 			<version>4.8.2</version>
 		</dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>r07</version>
-        </dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>r07</version>
+		</dependency>
 
 		<dependency>
 			<groupId>cglib</groupId>
@@ -73,6 +79,14 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
